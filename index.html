@@ -1,105 +1,42 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BMSS Hop - Kalkulator Harga Sederhana</title>
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:#f7f7fb; color:#111; padding:20px; }
-    .card { max-width:720px; margin:20px auto; background:#fff; border-radius:10px; box-shadow:0 6px 20px rgba(16,24,40,0.08); padding:22px; }
-    label { display:block; margin-top:12px; font-size:14px; color:#444; }
-    input[type="number"], select { width:100%; padding:10px; margin-top:6px; border:1px solid #e6e9ef; border-radius:8px; box-sizing:border-box; }
-    .row { display:flex; gap:12px; }
-    .col { flex:1; }
-    .result { margin-top:18px; padding:14px; background:#f1f5f9; border-radius:8px; font-weight:600; }
-    button { margin-top:14px; padding:10px 14px; border-radius:8px; border:0; background:#0ea5a4; color:#fff; cursor:pointer; }
-    small { color:#666; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h2>BMSS Hop — Kalkulator Harga (HPP → Etalase → Promo → Harga Akhir)</h2>
-    <p><small>Masukkan HPP (Harga Pokok), atur markup & diskon, lalu klik Hitung.</small></p>
-
-    <label>Harga Pokok (HPP)</label>
-    <input id="hpp" type="number" min="0" step="0.01" value="100000">
-
-    <div class="row">
-      <div class="col">
-        <label>Markup / Margin (%)</label>
-        <input id="margin" type="number" min="0" step="0.1" value="30">
-      </div>
-      <div class="col">
-        <label>Pajak (%)</label>
-        <input id="tax" type="number" min="0" step="0.1" value="0">
-      </div>
-    </div>
-
-    <label>Harga Etalase (opsional — kosongkan untuk otomatis dari HPP+margin)</label>
-    <input id="etalase" type="number" placeholder="Biarkan kosong untuk hitung otomatis">
-
-    <div class="row">
-      <div class="col">
-        <label>Jenis Promo</label>
-        <select id="promoType">
-          <option value="none">Tidak ada</option>
-          <option value="percent">Diskon % (contoh 10%)</option>
-          <option value="fixed">Potongan Nominal (contoh 10000)</option>
-        </select>
-      </div>
-      <div class="col">
-        <label>Nilai Promo</label>
-        <input id="promoValue" type="number" value="0" step="0.01" min="0">
-      </div>
-    </div>
-
-    <button id="calcBtn">Hitung Harga</button>
-
-    <div class="result" id="resultBox" aria-live="polite">
-      <div>Harga etalase: <span id="outEtalase">-</span></div>
-      <div>Harga promo: <span id="outPromo">-</span></div>
-      <div>Harga akhir (setelah pajak jika ada): <span id="outFinal">-</span></div>
-    </div>
-  </div>
-
-  <script>
-    function formatRp(n) {
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits:0 }).format(n);
-    }
-
-    function calc() {
-      const hpp = parseFloat(document.getElementById('hpp').value) || 0;
-      const marginPct = parseFloat(document.getElementById('margin').value) || 0;
-      const taxPct = parseFloat(document.getElementById('tax').value) || 0;
-      const etalaseInput = document.getElementById('etalase').value;
-      const promoType = document.getElementById('promoType').value;
-      const promoValue = parseFloat(document.getElementById('promoValue').value) || 0;
-
-      // Harga etalase: kalau user isi manual gunakan itu, kalau tidak hitung dari HPP + margin
-      const etalase = (etalaseInput !== '') ? parseFloat(etalaseInput) : Math.round(hpp * (1 + marginPct/100));
-
-      // Hitung harga promo
-      let priceAfterPromo = etalase;
-      if (promoType === 'percent') {
-        priceAfterPromo = etalase * (1 - promoValue/100);
-      } else if (promoType === 'fixed') {
-        priceAfterPromo = etalase - promoValue;
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Pricing Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Custom scrollbar for better aesthetics */
+      ::-webkit-scrollbar {
+        width: 8px;
       }
-
-      if (priceAfterPromo < 0) priceAfterPromo = 0;
-
-      // Pajak diterapkan pada harga setelah promo
-      const finalPrice = Math.round(priceAfterPromo * (1 + taxPct/100));
-
-      document.getElementById('outEtalase').textContent = formatRp(etalase);
-      document.getElementById('outPromo').textContent = formatRp(Math.round(priceAfterPromo));
-      document.getElementById('outFinal').textContent = formatRp(finalPrice);
-    }
-
-    document.getElementById('calcBtn').addEventListener('click', calc);
-
-    // Hitung otomatis sekali saat buka
-    window.addEventListener('load', calc);
-  </script>
-</body>
+      ::-webkit-scrollbar-track {
+        background: #1e293b; /* slate-800 */
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569; /* slate-600 */
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b; /* slate-500 */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

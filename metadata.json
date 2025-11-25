@@ -1,0 +1,5 @@
+{
+  "name": "Copy of Product Pricing Calculator",
+  "description": "An interactive web application to calculate product selling prices, including profit margins and campaign discounts. Users can input the cost of goods, desired profit, and a base campaign price to see the final retail price and various discounted campaign prices.",
+  "requestFramePermissions": []
+}
